@@ -3,13 +3,13 @@ import os
 import time
 from multiprocessing import Process
 
-#initialize pins
+# initialize pins
 powerPin = 3 #pin 5
 ledPin = 14 #TXD
 resetPin = 2 #pin 13
 powerenPin = 4 #pin 5
 
-#initialize GPIO settings
+# initialize GPIO settings
 def init():
 	GPIO.setmode(GPIO.BCM)
 	GPIO.setup(powerPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -20,22 +20,26 @@ def init():
 	GPIO.output(powerenPin, GPIO.HIGH)
 	GPIO.setwarnings(False)
 
-#waits for user to hold button up to 1 second before issuing poweroff command
+# waits for user to hold button up to 1 second before issuing poweroff command
 def poweroff():
 	while True:
-		#self.assertEqual(GPIO.input(powerPin), GPIO.LOW)
-		GPIO.wait_for_edge(powerPin, GPIO.FALLING)
+		# self.assertEqual(GPIO.input(powerPin), GPIO.LOW)
+		# GPIO.wait_for_edge(powerPin, GPIO.FALLING)
+		while GPIO.input(powerPin) != GPIO.LOW:
+                    time.sleep(0.2)
 		os.system("sudo killall emulationstation")
 		os.system("sudo killall emulationstatio") #RetroPie 4.6
 		os.system("sudo sleep 5s")
-		os.system("sudo shutdown -r now")
+		os.system("sudo shutdown -P now")
 
-#blinks the LED to signal button being pushed
+# blinks the LED to signal button being pushed
 def ledBlink():
 	while True:
 		GPIO.output(ledPin, GPIO.HIGH)
-		#self.assertEqual(GPIO.input(powerPin), GPIO.LOW)
-		GPIO.wait_for_edge(powerPin, GPIO.FALLING)
+		# self.assertEqual(GPIO.input(powerPin), GPIO.LOW)
+		# GPIO.wait_for_edge(powerPin, GPIO.FALLING)
+		while GPIO.input(powerPin) != GPIO.LOW:
+                    time.sleep(0.2)
 		start = time.time()
 		while GPIO.input(powerPin) == GPIO.LOW:
 			GPIO.output(ledPin, GPIO.LOW)
@@ -43,21 +47,23 @@ def ledBlink():
 			GPIO.output(ledPin, GPIO.HIGH)
 			time.sleep(0.2)
 
-#resets the pi
+# resets the pi
 def reset():
 	while True:
-		#self.assertEqual(GPIO.input(resetPin), GPIO.LOW)
-		GPIO.wait_for_edge(resetPin, GPIO.FALLING)
+		# self.assertEqual(GPIO.input(resetPin), GPIO.LOW)
+		# GPIO.wait_for_edge(resetPin, GPIO.FALLING)
+		while GPIO.input(resetPin) != GPIO.LOW:
+                    time.sleep(0.2)
 		os.system("sudo killall emulationstation")
-		os.system("sudo killall emulationstatio") #RetroPie 4.6
+		os.system("sudo killall emulationstatio") # RetroPie 4.6
 		os.system("sudo sleep 5s")
 		os.system("sudo shutdown -r now")
 
 
 if __name__ == "__main__":
-	#initialize GPIO settings
+	# initialize GPIO settings
 	init()
-	#create a multiprocessing.Process instance for each function to enable parallelism 
+	# create a multiprocessing.Process instance for each function to enable parallelism 
 	powerProcess = Process(target = poweroff)
 	powerProcess.start()
 	ledProcess = Process(target = ledBlink)
