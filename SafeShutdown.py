@@ -5,7 +5,7 @@ from multiprocessing import Process
 
 # initialize pins
 powerPin = 3 #pin 5
-ledPin = 14 #TXD
+ledPin = 15 #TXD
 resetPin = 2 #pin 13
 powerenPin = 4 #pin 5
 
